@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { gigetCommand, readMetadata } from '../website/src/lib/catalog-metadata.js';
+import { validateCLICatalog } from './validate-cli-catalog.mjs';
 
 export const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 
@@ -61,6 +62,7 @@ export function validateRepository(root = repositoryRoot) {
   for (const folder of folders) {
     if (!seenPaths.has(folder)) issues.push(`${folder}: missing catalog entry`);
   }
+  issues.push(...validateCLICatalog(root, entries));
   return { issues, folders, entries };
 }
 

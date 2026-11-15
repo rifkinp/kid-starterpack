@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "id": "elysia-api",
+      "title": "Elysia API",
+      "description": "Type-safe API with healthcheck, CRUD example, request validation and Scalar documentation.",
+      "path": "templates/backend/elysia-api",
+      "category": "Backend"
+    },
+    {
+      "id": "sveltekit-app",
+      "title": "SvelteKit App Shell",
+      "description": "A responsive dashboard with navigation, metrics and working local task interactions.",
+      "path": "templates/frontend/sveltekit-app",
+      "category": "Frontend"
+    },
+    {
+      "id": "sveltekit-minimal",
+      "title": "SvelteKit Minimal",
+      "description": "A fast, clean welcome screen and sensible defaults. Start from a blank canvas, without auth or databases.",
+      "path": "templates/frontend/sveltekit-minimal",
+      "category": "Frontend"
+    },
+    {
+      "id": "sveltekit-postgres",
+      "title": "SvelteKit + PostgreSQL",
+      "description": "A portable fullstack starter with sessions, Postgres data, login, signup and a protected tasks dashboard.",
+      "path": "templates/fullstack/sveltekit-postgres",
+      "category": "Fullstack"
+    },
+    {
+      "id": "sveltekit-supabase",
+      "title": "SvelteKit + Supabase",
+      "description": "An auth-ready web application with sign-in, sign-up, dashboard, notes and row-level security.",
+      "path": "templates/fullstack/sveltekit-supabase",
+      "category": "Fullstack"
+    }
+  ]
+}

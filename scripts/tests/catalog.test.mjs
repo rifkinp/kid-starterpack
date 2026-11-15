@@ -40,11 +40,24 @@ test('validator discovers starters and rejects orphans, duplicates and malformed
   const folder = path.join(root, metadata.path);
   fs.mkdirSync(folder, { recursive: true });
   fs.mkdirSync(path.join(root, 'content'));
+  const registry = JSON.stringify({ version: 1, templates: [{
+    id: metadata.slug, title: metadata.title, description: metadata.description,
+    path: metadata.path, category: metadata.category
+  }] });
+  for (const file of ['catalog/templates.json', 'packages/create-kid-starter/catalog.json']) {
+    fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    fs.writeFileSync(path.join(root, file), registry);
+  }
   for (const file of ['README.md', '.gitignore', 'LICENSE', 'bun.lock']) fs.writeFileSync(path.join(folder, file), 'fixture');
   fs.writeFileSync(path.join(folder, 'package.json'), JSON.stringify({ packageManager: 'bun@1.4.4', scripts: { dev: 'vite', check: 'check', build: 'build' } }));
   const markdown = `---\n${Object.entries(metadata).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join('\n')}\n---\nHello`;
   fs.writeFileSync(path.join(root, 'content/sample.md'), markdown);
   assert.deepEqual(validateRepository(root).issues, []);
+  const bundled = path.join(root, 'packages/create-kid-starter/catalog.json');
+  fs.writeFileSync(bundled, registry.replace(metadata.description, 'stale description'));
+  assert.match(validateRepository(root).issues.join('\n'), /Markdown mismatch/);
+  assert.match(validateRepository(root).issues.join('\n'), /catalogs must agree/);
+  fs.writeFileSync(bundled, registry);
   fs.writeFileSync(path.join(root, 'content/copy.md'), markdown);
   assert.match(validateRepository(root).issues.join('\n'), /duplicate slug/);
   assert.match(validateRepository(root).issues.join('\n'), /duplicate target/);

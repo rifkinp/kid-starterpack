@@ -6,9 +6,11 @@
   "scripts": {
     "validate": "node scripts/validate.mjs",
     "test": "node --test scripts/tests/*.test.mjs",
-    "lint": "oxlint scripts website/src templates --deny-warnings",
+    "lint": "oxlint scripts website/src templates packages --deny-warnings",
     "verify:extraction": "node scripts/verify-extraction.mjs",
-    "verify:giget": "node scripts/verify-giget.mjs"
+    "verify:giget": "node scripts/verify-giget.mjs",
+    "test:cli": "node --test packages/create-kid-starter/test/*.test.mjs",
+    "sync:catalog": "node scripts/sync-catalog.mjs"
   },
   "devDependencies": {
     "giget": "3.3.1",

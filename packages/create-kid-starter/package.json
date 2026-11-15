@@ -1,0 +1,44 @@
+{
+  "name": "create-kid-starter",
+  "version": "0.1.1",
+  "description": "Interactive and direct-copy CLI for Kid StarterPack templates",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rifkinp/kid-starterpack.git",
+    "directory": "packages/create-kid-starter"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "create-kid-starter": "./bin/create-kid-starter.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "catalog.json"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/index.mjs && node --check src/wizard.mjs && node --check bin/create-kid-starter.mjs",
+    "prepublishOnly": "npm run check && npm test"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "starter",
+    "scaffold",
+    "sveltekit",
+    "elysia",
+    "bun",
+    "template",
+    "cli"
+  ],
+  "packageManager": "bun@1.4.4"
+}

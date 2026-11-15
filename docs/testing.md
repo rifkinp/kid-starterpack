@@ -2,6 +2,10 @@
 
 Use Bun **1.4.4** and Node **22 or later** for maintenance scripts. Install each project independently; the root is not a workspace and supplies no runtime dependencies to starters.
 
+For the CLI, run root `bun run test:cli` and run `bun run check` from `packages/create-kid-starter`. CLI tests use a local Git fixture to verify sparse extraction, fresh optional Git initialization and preserved noninteractive direct copy. `npm pack --dry-run` checks the publishable file list, including `src/wizard.mjs`. Version 0.1.0 is published; the new Git option is prepared in source version 0.1.1 and requires a separate npm release.
+
+After changing Markdown metadata, run `bun run sync:catalog`; CI rejects stale live or bundled CLI catalogs.
+
 ## Checks without credentials
 
 From the repository root:

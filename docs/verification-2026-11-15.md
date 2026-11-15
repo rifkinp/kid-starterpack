@@ -1,6 +1,6 @@
 # Local release-hardening verification — 15 November 2026
 
-Base: `main` commit `8d7ce621f953a50f977ba2ae405600da5b173de5`. Changes are local on `fix/release-verification`; no new push, GitHub Actions run or deployment is claimed by this report.
+Base: `main` commit `8d7ce621f953a50f977ba2ae405600da5b173de5`. This records the initial local verification on `fix/release-verification`. Subsequent remote delivery and CI results are tracked in [PR #30](https://github.com/rifkinp/kid-starterpack/pull/30).
 
 ## Results
 
@@ -35,3 +35,7 @@ The machine's system trust certificates were used for local registry/Git access.
 Use [testing.md](testing.md) for maintained commands and provider setup. The code changes add no production database migration. New root development dependencies are Giget and Oxlint, plus the catalog's existing gray-matter parser as an explicit maintenance dependency. CI and test-only environment examples changed; application production environment variables did not.
 
 Relevant upstream references: [Bun lockfiles](https://bun.sh/docs/pm/lockfile), [Supabase resetPasswordForEmail](https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail), and [Better Auth programmatic migrations](https://better-auth.com/docs/concepts/database#programmatic-migrations). Runtime/API details were also checked against the installed pinned packages.
+
+## CLI integration follow-up
+
+PR #30 adds the zero-runtime-dependency CLI. The wizard now asks `Initialize Git repository? [y/N]`, while `--template` direct copy never prompts and does not initialize Git. Local checks passed: 12 CLI tests, 21 maintenance tests, lint, website check/build, package dry run and a generated/renamed project frozen install. The live and bundled CLI catalogs are generated from Markdown and validated for drift. npm 0.1.0 was verified published and its `--list` command ran successfully; source version 0.1.1 contains the new Git prompt and needs a separate npm publication.
