@@ -21,7 +21,7 @@
     "svelte": "5.57.3",
     "svelte-check": "4.3.3",
     "typescript": "5.9.3",
-    "vite": "6.3.6",
+    "vite": "8.3.8",
     "@types/pg": "8.15.5",
     "drizzle-kit": "0.31.7"
   },
