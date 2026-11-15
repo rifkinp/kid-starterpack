@@ -25,7 +25,7 @@
     {
       "id": "sveltekit-postgres",
       "title": "SvelteKit + PostgreSQL",
-      "description": "A portable fullstack starter with verified signup, account settings, session management and a protected PostgreSQL tasks dashboard.",
+      "description": "A SvelteKit and PostgreSQL starter with Drizzle, Better Auth, Tailwind CSS, TypeScript, Bun, and unit/integration tests.",
       "path": "templates/fullstack/sveltekit-postgres",
       "category": "Fullstack"
     },

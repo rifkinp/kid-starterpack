@@ -14,7 +14,7 @@ Kid StarterPack contains a Markdown-driven static catalog site and five standalo
 | [`sveltekit-app`](templates/frontend/sveltekit-app) | App ready | SvelteKit + local task demo | No account |
 | [`elysia-api`](templates/backend/elysia-api) | API ready | Elysia + Bun + OpenAPI | No account |
 | [`sveltekit-supabase`](templates/fullstack/sveltekit-supabase) | Auth ready | SvelteKit + Supabase SSR + RLS | Supabase project |
-| [`sveltekit-postgres`](templates/fullstack/sveltekit-postgres) | Auth ready | SvelteKit + PostgreSQL + Drizzle + Better Auth | PostgreSQL |
+| [`sveltekit-postgres`](templates/fullstack/sveltekit-postgres) | Auth ready | SvelteKit + PostgreSQL + Drizzle + Better Auth + Tailwind CSS + TypeScript + Bun + tests | PostgreSQL |
 
 ## First-party Kid StarterPack CLI
 

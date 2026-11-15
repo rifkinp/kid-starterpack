@@ -1,6 +1,20 @@
 # Kid · SvelteKit + PostgreSQL + Better Auth
 
-Vendor-neutral fullstack starter: SvelteKit 2, Svelte 5, Bun, PostgreSQL, Drizzle ORM for application data, Better Auth for sessions, UI for sign-up/login/reset and user-scoped task CRUD.
+Vendor-neutral fullstack starter: **SvelteKit + PostgreSQL + Drizzle + Better Auth + Tailwind CSS + TypeScript + Bun + tests**, with verified signup, account settings and user-scoped task CRUD.
+
+## Included stack
+
+| Technology | Responsibility |
+| --- | --- |
+| SvelteKit 2 / Svelte 5 | SSR, routes, server actions and UI |
+| PostgreSQL / pg | Persistent database and server-side connection pool |
+| Drizzle ORM / Drizzle Kit | Typed application queries, task schema and schema tooling |
+| Better Auth | Authentication, email verification, password flows and sessions |
+| Tailwind CSS 4 | Styling through `@tailwindcss/vite` |
+| TypeScript | Strict application type checking |
+| Bun 1.4.4 | Package installation, development and integration runner |
+| Node.js Test Runner | Credential-free email-transport regression tests |
+| HTTP integration suite | Real auth routes, task ownership and sessions on disposable PostgreSQL |
 
 ## Setup
 
@@ -38,4 +52,22 @@ See `migrations/0001_tasks.sql` and `src/lib/server/auth.ts` for details. Valida
 
 Use Bun **1.4.4** and the included `bun.lock`. Run `bun install --frozen-lockfile` to reproduce the checked dependency graph. When deliberately changing dependencies, update the manifest and lockfile together and rerun checks. This folder does not need the monorepo root or its tooling.
 
-Run `bun run test` for email-transport regression checks. Provider integration checks are available via `bun run test:integration`; see `tests/.env.example` and the repository [testing guide](https://github.com/rifkinp/kid-starterpack/blob/main/docs/testing.md). Use disposable test services only.
+## Checks and tests
+
+After installing dependencies:
+
+```bash
+bun run check
+bun run test
+bun run build
+```
+
+`bun run test` uses Node.js Test Runner to check production email failures and development-link handling without provider credentials or a database. Use Node.js 22+ for this test command. `bun run check` checks Svelte and TypeScript, including strict typing; the build also compiles Tailwind styles.
+
+For the HTTP integration suite, create an empty disposable PostgreSQL database whose name starts with `kid_test_`, copy `tests/.env.example` to `tests/.env`, then run:
+
+```bash
+bun --env-file=tests/.env run test:integration
+```
+
+This suite applies auth/app migrations and exercises verified signup, sign-in/out, profile validation, password changes/recovery, session revocation, task CRUD and denial of access across two users. CI runs it on PostgreSQL 17. Never point it at an application or production database. See the repository [testing guide](https://github.com/rifkinp/kid-starterpack/blob/main/docs/testing.md) for details and verification limits.
