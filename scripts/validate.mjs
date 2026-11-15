@@ -1,23 +1,75 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const required = ['README.md', 'package.json', '.gitignore'];
-const folders = ['templates/frontend/sveltekit-minimal', 'templates/frontend/sveltekit-app', 'templates/backend/elysia-api', 'templates/fullstack/sveltekit-supabase', 'templates/fullstack/sveltekit-postgres'];
-let issues = [];
-for (const folder of folders) {
-  for (const file of required) if (!fs.existsSync(path.join(root, folder, file))) issues.push(`${folder}: missing ${file}`);
-  const pkg = JSON.parse(fs.readFileSync(path.join(root, folder, 'package.json'), 'utf8'));
-  if (!pkg.scripts?.dev) issues.push(`${folder}: no dev command`);
+import matter from 'gray-matter';
+import { gigetCommand, readMetadata } from '../website/src/lib/catalog-metadata.js';
+
+export const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
+
+export function discoverTemplates(root) {
+  return ['frontend', 'backend', 'fullstack'].flatMap(category => {
+    const directory = path.join(root, 'templates', category);
+    if (!fs.existsSync(directory)) return [];
+    return fs.readdirSync(directory, { withFileTypes: true })
+      .filter(entry => entry.isDirectory())
+      .map(entry => `templates/${category}/${entry.name}`);
+  }).sort();
 }
-const contentFolder = path.join(root, 'content');
-for (const file of fs.readdirSync(contentFolder).filter(x=>x.endsWith('.md'))) {
-  const raw = fs.readFileSync(path.join(contentFolder,file),'utf8');
-  const templatePath = /^path:\s*(.+)$/m.exec(raw)?.[1]?.trim();
-  const slug = /^slug:\s*(.+)$/m.exec(raw)?.[1]?.trim();
-  if (!templatePath || !slug) { issues.push(`content/${file}: missing path/slug`); continue; }
-  if (slug !== file.slice(0,-3)) issues.push(`content/${file}: slug/filename mismatch`);
-  if (!fs.existsSync(path.join(root,templatePath,'package.json'))) issues.push(`content/${file}: bad target ${templatePath}`);
+
+export function validateRepository(root = repositoryRoot) {
+  const issues = [];
+  const folders = discoverTemplates(root);
+  const entries = [];
+  const seenSlugs = new Set();
+  const seenPaths = new Set();
+  if (!folders.length) issues.push('No starter folders found');
+  for (const folder of folders) {
+    for (const file of ['README.md', 'package.json', '.gitignore', 'LICENSE', 'bun.lock']) {
+      if (!fs.existsSync(path.join(root, folder, file))) issues.push(`${folder}: missing ${file}`);
+    }
+    try {
+      const pkg = JSON.parse(fs.readFileSync(path.join(root, folder, 'package.json'), 'utf8'));
+      for (const command of ['dev', 'check']) {
+        if (!pkg.scripts?.[command]) issues.push(`${folder}: missing ${command} script`);
+      }
+      if (!pkg.scripts?.build && !pkg.scripts?.test) issues.push(`${folder}: missing build/test script`);
+      if (pkg.packageManager !== 'bun@1.4.4') issues.push(`${folder}: packageManager must be bun@1.4.4`);
+    } catch (error) {
+      issues.push(`${folder}: ${error.message}`);
+    }
+  }
+  const content = path.join(root, 'content');
+  const files = fs.existsSync(content) ? fs.readdirSync(content).filter(file => file.endsWith('.md')) : [];
+  if (!files.length) issues.push('No catalog entries found');
+  for (const file of files) {
+    try {
+      const raw = fs.readFileSync(path.join(content, file), 'utf8');
+      if (!/^---\r?\n/.test(raw)) throw new Error('Missing YAML frontmatter');
+      const metadata = readMetadata(matter(raw).data);
+      if (seenSlugs.has(metadata.slug)) issues.push(`${file}: duplicate slug ${metadata.slug}`);
+      if (seenPaths.has(metadata.path)) issues.push(`${file}: duplicate target ${metadata.path}`);
+      seenSlugs.add(metadata.slug);
+      seenPaths.add(metadata.path);
+      if (metadata.slug !== file.slice(0, -3)) issues.push(`${file}: slug/filename mismatch`);
+      if (!folders.includes(metadata.path)) issues.push(`${file}: missing starter ${metadata.path}`);
+      gigetCommand(metadata, 'rifkinp');
+      entries.push(metadata);
+    } catch (error) {
+      issues.push(`${file}: ${error.message}`);
+    }
+  }
+  for (const folder of folders) {
+    if (!seenPaths.has(folder)) issues.push(`${folder}: missing catalog entry`);
+  }
+  return { issues, folders, entries };
 }
-if (issues.length) { console.error(issues.join('\n')); process.exit(1); }
-console.log(`Validated ${folders.length} standalone templates and ${fs.readdirSync(contentFolder).filter(x=>x.endsWith('.md')).length} catalog entries.`);
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const result = validateRepository();
+  if (result.issues.length) {
+    console.error(result.issues.join('\n'));
+    process.exitCode = 1;
+  } else {
+    console.log(`Validated ${result.folders.length} standalone templates and ${result.entries.length} catalog entries.`);
+  }
+}

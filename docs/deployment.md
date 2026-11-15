@@ -9,11 +9,13 @@ The website uses SvelteKit `adapter-static`. `cd website && bun install && bun r
 1. Import `rifkinp/kid-starterpack` from GitHub in the Vercel dashboard.
 2. Set **Root Directory** to `website`.
 3. Select **Framework Preset: Other** (static build) and configure:
-   - Install Command: `bun install`
+   - Install Command: `bun install --frozen-lockfile`
    - Build Command: `bun run build`
    - Output Directory: `build`
 4. Add `VITE_GITHUB_OWNER=rifkinp`. Leave `VITE_BASE_PATH` unset for a root-domain deployment.
 5. Deploy. Only the catalog website is deployed, not the independent starter templates.
+
+Use Bun 1.4.4, matching `website/package.json` and CI. Enable **Include source files outside of the Root Directory in the Build Step** so Vite can read `../content/*.md`. The root maintenance manifest does not define a workspace and is not needed by the website build. Build success verifies the static catalog, not authentication in the independent starters.
 
 GitHub Pages workflow is optional and manually triggered; it will not auto-deploy when Vercel is being used.
 

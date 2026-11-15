@@ -8,7 +8,9 @@
     "dev": "vite dev --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test": "svelte-kit sync && node --test tests/*.test.mjs",
+    "test:integration": "bun tests/integration.mjs"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "6.0.0",
@@ -24,5 +26,6 @@
   "dependencies": {
     "@supabase/supabase-js": "2.83.0",
     "@supabase/ssr": "0.7.0"
-  }
+  },
+  "packageManager": "bun@1.4.4"
 }

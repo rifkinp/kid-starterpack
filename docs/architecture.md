@@ -19,3 +19,5 @@ Supabase projects use Supabase Auth so SSR cookies and Postgres RLS share the sa
 ## Static site content
 
 The `website` imports Markdown via Vite `import.meta.glob`, processes frontmatter and exports one HTML page per slug. No runtime GitHub API, CMS or database needed.
+
+The website and repository validator share `website/src/lib/catalog-metadata.js` to enforce the same frontmatter types and Giget path rules. This is catalog tooling, not a dependency of the standalone starters. The root manifest contains maintenance tooling only and declares no Bun workspaces. Each application owns its own lockfile and dependency installation.
