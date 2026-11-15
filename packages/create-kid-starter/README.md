@@ -2,7 +2,7 @@
 
 First-party CLI for the open-source [Kid StarterPack](https://github.com/rifkinp/kid-starterpack) monorepo.
 
-**Status:** [0.1.0 is published on npm](https://www.npmjs.com/package/create-kid-starter). This source prepares 0.1.1 with optional Git initialization in the wizard. Publish 0.1.1 before expecting the new prompt from `@latest`.
+**Status:** [0.1.1 is published on npm](https://www.npmjs.com/package/create-kid-starter), including optional Git initialization in the wizard and the direct-copy `--git` flag.
 
 ## Wizard
 

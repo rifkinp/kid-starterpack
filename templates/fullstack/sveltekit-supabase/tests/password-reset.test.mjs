@@ -1,3 +1,4 @@
+import { createServer as createHttpServer } from 'node:http';
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'vite';
@@ -5,7 +6,7 @@ import { createServer } from 'vite';
 let server;
 let action;
 before(async () => {
-  server = await createServer({ server: { middlewareMode: true }, appType: 'custom' });
+  server = await createServer({ server: { middlewareMode: true, hmr: { server: createHttpServer() } }, appType: 'custom' });
   const route = await server.ssrLoadModule('/src/routes/forgot-password/+page.server.ts');
   action = route.actions.default;
 });

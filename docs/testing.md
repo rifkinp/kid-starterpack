@@ -2,7 +2,7 @@
 
 Use Bun **1.4.4** and Node **22 or later** for maintenance scripts. Install each project independently; the root is not a workspace and supplies no runtime dependencies to starters.
 
-For the CLI, run root `bun run test:cli` and run `bun run check` from `packages/create-kid-starter`. CLI tests use a local Git fixture to verify sparse extraction, fresh optional Git initialization and preserved noninteractive direct copy. `npm pack --dry-run` checks the publishable file list, including `src/wizard.mjs`. Version 0.1.0 is published; the new Git option is prepared in source version 0.1.1 and requires a separate npm release.
+For the CLI, run root `bun run test:cli` and run `bun run check` from `packages/create-kid-starter`. CLI tests use a local Git fixture to verify sparse extraction, fresh optional Git initialization and preserved noninteractive direct copy. `npm pack --dry-run` checks the publishable file list, including `src/wizard.mjs`. Version 0.1.1 is published, including the wizard Git choice and direct-copy `--git` flag.
 
 After changing Markdown metadata, run `bun run sync:catalog`; CI rejects stale live or bundled CLI catalogs.
 
@@ -40,6 +40,8 @@ bun run test
 
 These tests execute the actual forgot-password server action through Vite with a controlled provider boundary: provider failure, network failure, generic successful responses/recovery redirect and invalid input. They require no external project or email transport.
 
+They also exercise settings authentication, metadata-only profile updates, current-user recovery email targets, other-device signout scope, resend confirmation, PKCE redirect allowlists and token-hash confirmation/recovery callbacks. These route-boundary tests do not prove email delivery or provider cookie behavior in a real browser.
+
 ## PostgreSQL HTTP integration
 
 Create an **empty disposable database** whose name starts with `kid_test_`. The runner refuses other names and non-empty public schemas. Export its connection URL as `KID_TEST_DATABASE_URL`, then:
@@ -54,6 +56,8 @@ Alternatively, copy `tests/.env.example` to `tests/.env` and run `bun --env-file
 
 Development reset-link capture verifies token handling, not production email delivery. Verify Resend sender settings and real inbox delivery separately.
 
+The PostgreSQL integration now requires verification before login, follows development verification links, checks profile validation and ensures settings HTML does not contain session tokens. It also exercises current-password changes and other-session revocation before the existing CRUD and password-reset cases. `bun run test` checks that production email configuration/provider failures never log links or falsely report delivery.
+
 ## Supabase provider and RLS integration
 
 Use a **dedicated disposable Supabase project**, apply the supplied notes migration, then configure the values in `templates/fullstack/sveltekit-supabase/tests/.env.example`. The admin key is used only by the test runner to create and remove its own users; it is never passed to the application or browser.
@@ -64,6 +68,8 @@ bun --env-file=tests/.env run test:integration
 ```
 
 This suite requires explicit `KID_TEST_SUPABASE_DISPOSABLE=yes`. It creates two unique test users, checks sign-in, owner CRUD, anonymous/foreign access denial, forged ownership and owner reassignment denial, provider recovery tokens, password replacement and sign-out. Its cleanup deletes only the user IDs created by that run. An interrupted run may leave `kid-test-*` users: inspect and remove only those test users from the disposable project.
+
+It additionally checks display-name updates and other-device refresh-token revocation while the current account and the second user's sessions remain usable. Access-token expiry is distinct from refresh-session revocation.
 
 The manual **Verify disposable Supabase** workflow reads the three test credentials from the `supabase-test` GitHub environment. Configure `KID_TEST_SUPABASE_URL`, `KID_TEST_SUPABASE_PUBLISHABLE_KEY`, and `KID_TEST_SUPABASE_ADMIN_KEY` there. It has no production defaults and is not run on pull requests. This provider test uses admin-confirmed users and generated recovery tokens; SMTP delivery, signup confirmation links and the browser's SSR/PKCE recovery callback are **not** covered. Verify these separately before a production-ready claim.
 

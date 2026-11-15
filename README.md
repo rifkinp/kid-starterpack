@@ -55,7 +55,7 @@ node packages/create-kid-starter/bin/create-kid-starter.mjs --template elysia-ap
 
 The CLI requires Node.js 20+ and Git. It does **not** need a build step or third-party runtime dependencies. Run `node --test` inside `packages/create-kid-starter` for CLI tests.
 
-**npm status:** Version **0.1.0** is published. The optional Git initialization added here is prepared for **0.1.1** and is available from the repository until that version is published. See the [CLI publishing guide](packages/create-kid-starter/README.md).
+**npm status:** Version **0.1.1** is published, including optional Git initialization in both the wizard and direct-copy mode. See the [CLI publishing guide](packages/create-kid-starter/README.md).
 
 ### Available now: Giget fallback
 

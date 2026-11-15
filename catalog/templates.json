@@ -25,14 +25,14 @@
     {
       "id": "sveltekit-postgres",
       "title": "SvelteKit + PostgreSQL",
-      "description": "A portable fullstack starter with sessions, Postgres data, login, signup and a protected tasks dashboard.",
+      "description": "A portable fullstack starter with verified signup, account settings, session management and a protected PostgreSQL tasks dashboard.",
       "path": "templates/fullstack/sveltekit-postgres",
       "category": "Fullstack"
     },
     {
       "id": "sveltekit-supabase",
       "title": "SvelteKit + Supabase",
-      "description": "An auth-ready web application with sign-in, sign-up, dashboard, notes and row-level security.",
+      "description": "An auth-ready web application with account settings, email confirmation routes, private notes and row-level security.",
       "path": "templates/fullstack/sveltekit-supabase",
       "category": "Fullstack"
     }

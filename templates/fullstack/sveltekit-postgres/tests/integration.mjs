@@ -13,6 +13,7 @@ assert.ok(databaseURL, 'Set KID_TEST_DATABASE_URL to an empty disposable Postgre
 assert.match(new URL(databaseURL).pathname, /^\/kid_test_[a-z0-9_]+$/i);
 process.env.DATABASE_URL = databaseURL;
 process.env.BETTER_AUTH_SECRET = randomBytes(32).toString('hex');
+process.env.REQUIRE_EMAIL_VERIFICATION = 'true';
 delete process.env.RESEND_API_KEY;
 delete process.env.RESEND_FROM_EMAIL;
 const listener = net.createServer();
@@ -37,6 +38,18 @@ function cookies(response) {
 }
 async function dashboard(cookie = '') {
   return fetch(`${origin}/dashboard`, { headers: { cookie }, redirect: 'manual', signal: AbortSignal.timeout(10_000) });
+}
+async function settings(cookie = '') {
+  return fetch(`${origin}/settings`, { headers: { cookie }, redirect: 'manual', signal: AbortSignal.timeout(10_000) });
+}
+async function emailLink(kind, email) {
+  const marker = `${kind} link for ${email}: `;
+  for (let attempt = 0; attempt < 25; attempt++) {
+    const line = logs.split('\n').find(value => value.includes(marker));
+    if (line) return line.split(marker)[1].trim();
+    await new Promise(resolve => setTimeout(resolve, 200));
+  }
+  throw new Error(`Development ${kind.toLowerCase()} email was not captured`);
 }
 async function action(name, data, cookie = '') {
   return fetch(`${origin}/dashboard?/${name}`, {
@@ -71,6 +84,7 @@ try {
   server.stderr.on('data', chunk => { logs = (logs + chunk).slice(-32_000); });
   await ready();
   assert.equal((await dashboard()).status, 303);
+  assert.equal((await settings()).status, 303);
   assert.equal((await action('add', { title: 'unauthorized' })).status, 303);
   const password = randomBytes(24).toString('hex');
   const emailA = `kid-a-${randomUUID()}@example.com`;
@@ -79,8 +93,41 @@ try {
   const signupB = await api('sign-up/email', { name: 'Test B', email: emailB, password });
   assert.equal(signupA.status, 200);
   assert.equal(signupB.status, 200);
-  const cookieA = cookies(signupA);
-  const cookieB = cookies(signupB);
+  assert.equal(cookies(signupA), '', 'Unverified signup must not create a session');
+  assert.equal((await api('sign-in/email', { email: emailA, password })).status, 403);
+  for (const email of [emailA, emailB]) {
+    const response = await fetch(await emailLink('Verification', email), { redirect: 'manual' });
+    assert.ok(response.status === 200 || response.status === 302);
+  }
+  const signinA = await api('sign-in/email', { email: emailA, password });
+  const signinB = await api('sign-in/email', { email: emailB, password });
+  assert.equal(signinA.status, 200);
+  assert.equal(signinB.status, 200);
+  let cookieA = cookies(signinA);
+  const cookieB = cookies(signinB);
+  let passwordA = password;
+  const otherA = cookies(await api('sign-in/email', { email: emailA, password }));
+  const sessionResponse = await fetch(`${origin}/api/auth/list-sessions`, { headers: { cookie: cookieA } });
+  assert.equal(sessionResponse.status, 200);
+  const sessions = await sessionResponse.json();
+  assert.equal(sessions.length, 2);
+  const settingsResponse = await settings(cookieA);
+  assert.equal(settingsResponse.status, 200);
+  const settingsHTML = await settingsResponse.text();
+  for (const session of sessions) assert.ok(!settingsHTML.includes(session.token), 'Settings must not serialize session tokens');
+  assert.equal((await api('update-user', { name: 'Updated Test A' }, cookieA)).status, 200);
+  assert.ok((await (await settings(cookieA)).text()).includes('Updated Test A'));
+  assert.equal((await api('update-user', { name: 'x'.repeat(101) }, cookieA)).status, 400);
+  assert.equal((await api('revoke-other-sessions', {}, cookieA)).status, 200);
+  assert.equal((await dashboard(otherA)).status, 303);
+  assert.equal((await dashboard(cookieA)).status, 200);
+  const passwordSession = cookies(await api('sign-in/email', { email: emailA, password }));
+  assert.equal((await api('change-password', { currentPassword: 'incorrect-password', newPassword: 'unused-password-123' }, cookieA)).status, 400);
+  passwordA = randomBytes(24).toString('hex');
+  const passwordChange = await api('change-password', { currentPassword: password, newPassword: passwordA, revokeOtherSessions: true }, cookieA);
+  assert.equal(passwordChange.status, 200);
+  cookieA = cookies(passwordChange) || cookieA;
+  assert.equal((await dashboard(passwordSession)).status, 303);
   const title = `private-${randomUUID()}`;
   assert.equal((await action('add', { title }, cookieA)).status, 200);
   assert.ok((await (await dashboard(cookieA)).text()).includes(title));
@@ -101,11 +148,7 @@ try {
   assert.equal(login.status, 200);
   assert.equal((await dashboard(cookies(login))).status, 200);
   assert.equal((await api('request-password-reset', { email: emailA, redirectTo: `${origin}/reset-password` })).status, 200);
-  let resetLink;
-  for (let attempt = 0; attempt < 25 && !resetLink; attempt++) {
-    resetLink = logs.match(/Reset link for [^\n]+?: (http[^\s]+)/)?.[1];
-    if (!resetLink) await new Promise(resolve => setTimeout(resolve, 200));
-  }
+  const resetLink = await emailLink('Reset', emailA);
   assert.ok(resetLink, 'Expected the development-only reset transport to capture a link');
   const resetRedirect = await fetch(resetLink, { redirect: 'manual', signal: AbortSignal.timeout(10_000) });
   const token = new URL(resetRedirect.headers.get('location'), origin).searchParams.get('token');
@@ -113,10 +156,10 @@ try {
   const newPassword = randomBytes(24).toString('hex');
   assert.equal((await api('reset-password', { token, newPassword })).status, 200);
   assert.ok(!(await api('reset-password', { token, newPassword })).ok, 'Reset tokens must be single-use');
-  assert.ok(!(await api('sign-in/email', { email: emailA, password })).ok);
+  assert.ok(!(await api('sign-in/email', { email: emailA, password: passwordA })).ok);
   assert.equal((await dashboard(cookieA)).status, 303, 'Password reset must revoke old sessions');
   assert.equal((await api('sign-in/email', { email: emailA, password: newPassword })).status, 200);
-  console.log('PostgreSQL HTTP integration passed: migrations, signup/login/logout, task CRUD, two-user isolation, reset and session revocation.');
+  console.log('PostgreSQL HTTP integration passed: verification-required signup, profile validation, settings without session tokens, password change, session revocation, task isolation and reset.');
 } finally {
   if (server && server.exitCode === null) {
     const stopped = once(server, 'exit');

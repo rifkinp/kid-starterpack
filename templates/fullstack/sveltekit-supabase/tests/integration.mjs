@@ -32,6 +32,14 @@ try {
   const userB = await createUser(emailB);
   assert.equal((await clientA.auth.signInWithPassword({ email: emailA, password })).error, null);
   assert.equal((await clientB.auth.signInWithPassword({ email: emailB, password })).error, null);
+  const otherA = createClient(url, key, options);
+  assert.equal((await otherA.auth.signInWithPassword({ email: emailA, password })).error, null);
+  assert.equal((await clientA.auth.updateUser({ data: { display_name: 'Updated Test A' } })).error, null);
+  assert.equal((await clientA.auth.getUser()).data.user?.user_metadata.display_name, 'Updated Test A');
+  assert.equal((await clientA.auth.signOut({ scope: 'others' })).error, null);
+  assert.ok((await otherA.auth.refreshSession()).error, 'Other-device refresh tokens must be revoked');
+  assert.equal((await clientA.auth.getUser()).data.user?.id, userA.id);
+  assert.equal((await clientB.auth.getUser()).data.user?.id, userB.id);
   const inserted = await clientA.from('notes').insert({ user_id: userA.id, title: `private-${randomUUID()}` }).select('id,title').single();
   assert.equal(inserted.error, null, 'Apply supabase/migrations/0001_notes.sql to the disposable project first');
   const note = inserted.data;
