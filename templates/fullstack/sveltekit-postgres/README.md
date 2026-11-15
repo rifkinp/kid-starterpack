@@ -25,3 +25,9 @@ In development, reset links are logged to your **server terminal** if `RESEND_AP
 - Better Auth is configured with its standard PostgreSQL (`pg.Pool`) adapter. **Drizzle ORM manages application tasks**; this avoids coupling authentication database migrations to the application schema.
 
 See `migrations/0001_tasks.sql` and `src/lib/server/auth.ts` for details. Validate against a disposable PostgreSQL database before production use.
+
+## Reproducible installation
+
+Use Bun **1.4.4** and the included `bun.lock`. Run `bun install --frozen-lockfile` to reproduce the checked dependency graph. When deliberately changing dependencies, update the manifest and lockfile together and rerun checks. This folder does not need the monorepo root or its tooling.
+
+Provider integration checks are available via `bun run test:integration`; see `tests/.env.example` and the repository [testing guide](https://github.com/rifkinp/kid-starterpack/blob/main/docs/testing.md). Use disposable test services only.

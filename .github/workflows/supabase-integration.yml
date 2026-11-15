@@ -1,0 +1,25 @@
+name: Verify disposable Supabase
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  supabase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: supabase-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.4'
+      - name: Test provider recovery and two-user RLS on a disposable project
+        working-directory: templates/fullstack/sveltekit-supabase
+        env:
+          KID_TEST_SUPABASE_DISPOSABLE: 'yes'
+          KID_TEST_SUPABASE_URL: ${{ secrets.KID_TEST_SUPABASE_URL }}
+          KID_TEST_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.KID_TEST_SUPABASE_PUBLISHABLE_KEY }}
+          KID_TEST_SUPABASE_ADMIN_KEY: ${{ secrets.KID_TEST_SUPABASE_ADMIN_KEY }}
+        run: |
+          bun install --frozen-lockfile
+          bun run test:integration

@@ -32,3 +32,9 @@ Welcome page renders even before keys are set; auth operations require actual Su
 ## Reference
 
 https://supabase.com/docs/guides/getting-started/tutorials/with-sveltekit
+
+## Reproducible installation
+
+Use Bun **1.4.4** and the included `bun.lock`. Run `bun install --frozen-lockfile` to reproduce the checked dependency graph. When deliberately changing dependencies, update the manifest and lockfile together and rerun checks. This folder does not need the monorepo root or its tooling.
+
+Provider integration checks are available via `bun run test:integration`; see `tests/.env.example` and the repository [testing guide](https://github.com/rifkinp/kid-starterpack/blob/main/docs/testing.md). Use disposable test services only.
