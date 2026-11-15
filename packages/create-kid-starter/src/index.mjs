@@ -156,7 +156,9 @@ export async function createProject({
     // mkdir without recursive=true makes destination creation atomic.
     await mkdir(destination);
     createdDestination = true;
-    await cp(source, destination, { recursive: true, force: false, errorOnExist: true });
+    // The destination was created atomically above and is empty. Keep force=false
+    // to prevent replacing files if another process races with the copy.
+    await cp(source, destination, { recursive: true, force: false, errorOnExist: false });
     const manifestPath = join(destination, 'package.json');
     try {
       const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
