@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "id": "sveltekit-minimal",
+      "title": "SvelteKit Minimal",
+      "description": "SvelteKit + Bun + Tailwind starter with a welcome page.",
+      "path": "templates/frontend/sveltekit-minimal",
+      "category": "Frontend"
+    },
+    {
+      "id": "sveltekit-app",
+      "title": "SvelteKit App",
+      "description": "App-ready SvelteKit with a local task demo.",
+      "path": "templates/frontend/sveltekit-app",
+      "category": "Frontend"
+    },
+    {
+      "id": "elysia-api",
+      "title": "Elysia API",
+      "description": "Bun + Elysia + OpenAPI starter API.",
+      "path": "templates/backend/elysia-api",
+      "category": "Backend"
+    },
+    {
+      "id": "sveltekit-supabase",
+      "title": "SvelteKit Supabase",
+      "description": "SvelteKit + Supabase SSR authentication and RLS.",
+      "path": "templates/fullstack/sveltekit-supabase",
+      "category": "Fullstack"
+    },
+    {
+      "id": "sveltekit-postgres",
+      "title": "SvelteKit PostgreSQL",
+      "description": "SvelteKit + PostgreSQL + Drizzle + Better Auth.",
+      "path": "templates/fullstack/sveltekit-postgres",
+      "category": "Fullstack"
+    }
+  ]
+}
