@@ -19,7 +19,7 @@ No external credentials required.
 
 ## Getting started
 
-1. Copy the Giget command below from the GitHub repo.
+1. Copy the direct Kid StarterPack CLI command from this page (it skips the wizard).
 2. Install the dependencies with `bun install`.
 3. Follow the template's README for environment variables, migrations and local development.
 4. Run `bun run dev` (Elysia uses the same command) and begin building.
