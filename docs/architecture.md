@@ -10,7 +10,7 @@ A starter includes working route guards, sign in/up flows, server-side session v
 
 ## Why independent folders?
 
-A shared monorepo package would break extraction by Giget. Duplicate a little configuration until real demand justifies versioned packages.
+A shared monorepo package would break independent template extraction. Keep each starter self-contained; the CLI lives separately under `packages/create-kid-starter`.
 
 ## Why two auth libraries?
 
