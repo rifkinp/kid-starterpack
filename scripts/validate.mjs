@@ -32,9 +32,7 @@ if (!Array.isArray(registry.templates)) {
       continue;
     }
     ids.add(item.id);
-    const expected = new RegExp('^templates/(frontend|backend|fullstack)/' + item.id + '
-console.log(`Validated ${folders.length} standalone templates and ${fs.readdirSync(contentFolder).filter(x=>x.endsWith('.md')).length} catalog entries.`);
-);
+    const expected = new RegExp('^templates/(frontend|backend|fullstack)/' + item.id + '$');
     if (!expected.test(item.path)) issues.push('Unsafe catalog path: ' + item.path);
     if (!fs.existsSync(path.join(root, item.path, 'package.json'))) issues.push('Missing catalog template: ' + item.path);
     const md = path.join(contentFolder, item.id + '.md');
