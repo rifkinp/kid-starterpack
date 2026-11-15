@@ -2,6 +2,8 @@
 
 Static SvelteKit catalog driven by `../content/*.md`. No database, admin backend or GitHub API is used.
 
+Template details include a project-name field and optional Git initialization/Bun installation checkboxes. Names use a safe lowercase kebab-case subset: start with a letter, use letters/numbers separated by single hyphens, at most 214 characters, and avoid reserved operating-system directory names. Invalid names disable copying. The displayed command, copied command and subsequent `cd` step share the same validated name. Selecting Bun installation adds `--install --package-manager bun` and removes the redundant manual install step; Bun must already exist locally.
+
 ```bash
 bun install --frozen-lockfile
 bun run dev

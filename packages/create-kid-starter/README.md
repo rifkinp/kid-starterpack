@@ -26,6 +26,8 @@ npx --yes create-kid-starter@latest --template elysia-api my-api --git
 
 The checkbox and `--git` flag require version 0.1.1 or later; 0.1.0 does not support the flag.
 
+The website also accepts a lowercase kebab-case project name to replace `my-app`. Its **Install dependencies with Bun** checkbox adds `--install --package-manager bun`, so installation runs immediately after copying without extra CLI questions. Bun must be installed on the user's machine first. Without this checkbox, copying does not install dependencies.
+
 ```bash
 npx --yes create-kid-starter@latest -t sveltekit-supabase my-app --install
 ```

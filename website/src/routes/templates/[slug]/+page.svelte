@@ -1,12 +1,15 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { repositoryUrl } from '$lib/config';
-  import { directCopyCommand } from '$lib/cli-command.js';
+  import { directCopyCommand, projectNameError } from '$lib/cli-command.js';
 
   let { data } = $props();
   let copied = $state<'direct' | 'wizard' | null>(null);
   let initializeGit = $state(false);
-  let command = $derived(directCopyCommand(data.template.slug, initializeGit));
+  let projectName = $state('my-app');
+  let install = $state(false);
+  let nameError = $derived(projectNameError(projectName));
+  let command = $derived(nameError ? '' : directCopyCommand(data.template.slug, { directory: projectName, initializeGit, install }));
 
   async function copyCommand(command: string, kind: 'direct' | 'wizard') {
     try {
@@ -49,9 +52,26 @@
       <div class="text-xs tracking-[.17em] font-bold text-violet-300">QUICK START · NO WIZARD</div>
       <h2 class="font-bold text-xl mt-3">Copy {data.template.title}</h2>
       <p class="text-xs text-slate-400 leading-relaxed mt-2">
-        This command selects the template automatically, creates my-app, and skips every CLI question.
+        Name your project and choose setup options. The copied command skips every CLI question.
       </p>
 
+      <div class="mt-5">
+        <label for="project-name" class="block text-sm font-semibold text-slate-200">Project name</label>
+        <input
+          id="project-name"
+          class="mt-2 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-slate-200 outline-none focus:border-violet-400"
+          bind:value={projectName}
+          oninput={() => { copied = null; }}
+          placeholder="my-project"
+          autocomplete="off"
+          spellcheck={false}
+          maxlength="214"
+          aria-invalid={!!nameError}
+          aria-describedby="project-name-help project-name-error"
+        />
+        <p id="project-name-help" class="mt-2 text-xs leading-relaxed text-slate-400">Use lowercase letters, numbers and hyphens, like my-project. Start with a letter.</p>
+        <p id="project-name-error" class="mt-2 text-xs text-rose-300" aria-live="polite">{nameError ?? ''}</p>
+      </div>
       <label class="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
         <input
           type="checkbox"
@@ -64,10 +84,18 @@
           <span class="mt-1 block text-xs leading-relaxed text-slate-400">Start tracking your project with Git.</span>
         </span>
       </label>
-      <div class="mt-4 p-4 rounded-xl bg-[#0c1020] border border-white/10 break-all font-mono text-[12px] leading-6 text-slate-300 select-all">{command}</div>
+      <label class="mt-3 flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+        <input type="checkbox" class="mt-0.5 size-4 shrink-0 accent-violet-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-400" bind:checked={install} onchange={() => { copied = null; }} />
+        <span>
+          <span class="block text-sm font-semibold text-slate-200">Install dependencies with Bun</span>
+          <span class="mt-1 block text-xs leading-relaxed text-slate-400">Run bun install after copying. Bun must already be installed.</span>
+        </span>
+      </label>
+      <div class="mt-4 p-4 rounded-xl bg-[#0c1020] border border-white/10 break-all font-mono text-[12px] leading-6 text-slate-300 select-all">{command || 'Enter a valid project name to generate your command.'}</div>
       <button
         type="button"
-        class="k-btn k-btn-primary w-full mt-3"
+        class="k-btn k-btn-primary w-full mt-3 disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={!!nameError}
         onclick={() => copyCommand(command, 'direct')}
       >
         {copied === 'direct' ? '✓ Command copied' : 'Copy command · Skip wizard'}
@@ -81,11 +109,15 @@
       </p>
 
       <p class="text-slate-500 text-xs mt-6">Then run:</p>
-      <div class="rounded-xl p-4 mt-2 bg-white/5 font-mono text-xs leading-7 text-slate-300">
-        cd my-app<br />
-        bun install<br />
-        bun run dev
-      </div>
+      {#if !nameError}
+        <div class="rounded-xl p-4 mt-2 bg-white/5 font-mono text-xs leading-7 text-slate-300">
+          cd {projectName}<br />
+          {#if !install}bun install<br />{/if}
+          bun run dev
+        </div>
+      {:else}
+        <p class="mt-2 text-xs text-slate-400">Choose a valid name to see the next steps.</p>
+      {/if}
 
       <div class="border-t border-white/10 mt-6 pt-5">
         <div class="text-xs tracking-wider font-semibold text-slate-300">PREFER AN INTERACTIVE WIZARD?</div>
