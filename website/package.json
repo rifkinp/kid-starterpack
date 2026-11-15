@@ -21,11 +21,11 @@
     "svelte-check": "4.3.3",
     "typescript": "5.9.3",
     "vite": "6.3.6",
-    "@types/sanitize-html": "2.16.0"
+    "@types/sanitize-html": "2.16.2"
   },
   "dependencies": {
     "gray-matter": "4.0.3",
     "marked": "15.0.12",
-    "sanitize-html": "2.16.0"
+    "sanitize-html": "2.18.2"
   }
 }
