@@ -42,7 +42,7 @@ bun install
 bun run dev
 ```
 
-When `--template` is supplied, **no wizard or setup questions are shown**, even when project name is omitted (the template ID is used as the folder name). Dependencies are not installed unless `--install` is specified.
+When `--template` is supplied, **no wizard or setup questions are shown**, even when project name is omitted (the template ID is used as the folder name). Dependencies are not installed unless `--install` is specified. Git initialization is off by default; the website checkbox adds `--git` to opt in without prompting (requires CLI 0.1.1+).
 
 ### Use the latest CLI source locally
 
@@ -55,7 +55,7 @@ node packages/create-kid-starter/bin/create-kid-starter.mjs --template elysia-ap
 
 The CLI requires Node.js 20+ and Git. It does **not** need a build step or third-party runtime dependencies. Run `node --test` inside `packages/create-kid-starter` for CLI tests.
 
-**npm status:** Version **0.1.0** is published. The optional Git initialization added here is prepared for **0.1.1** and is available from the repository until that version is published. See the [CLI publishing guide](packages/create-kid-starter/README.md).
+**npm status:** Version **0.1.1** is published, including optional Git initialization in both the wizard and direct-copy mode. See the [CLI publishing guide](packages/create-kid-starter/README.md).
 
 ### Available now: Giget fallback
 

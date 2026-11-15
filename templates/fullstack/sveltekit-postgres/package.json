@@ -11,7 +11,8 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "db:push": "drizzle-kit push",
     "auth:migrate": "bunx auth@1.7.25 migrate --config ./src/lib/server/auth.ts",
-    "test:integration": "bun tests/integration.mjs"
+    "test:integration": "bun tests/integration.mjs",
+    "test": "svelte-kit sync && node --test tests/*.test.mjs"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "6.0.0",

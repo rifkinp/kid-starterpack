@@ -4,7 +4,7 @@ title: SvelteKit + Supabase
 category: Fullstack
 level: auth
 stack: SvelteKit + Supabase Auth
-description: An auth-ready web application with sign-in, sign-up, dashboard, notes and row-level security.
+description: An auth-ready web application with account settings, email confirmation routes, private notes and row-level security.
 path: templates/fullstack/sveltekit-supabase
 tags: ["SvelteKit", "Bun", "Supabase", "PostgreSQL", "Tailwind"]
 featured: true
@@ -12,6 +12,8 @@ featured: true
 ## What you get
 
 Protected dashboard and per-user notes. Supabase cookie SSR and strict RLS keep each account isolated.
+
+Account settings support display-name updates, email-based password recovery and sign-out of other devices. Confirmation routes support PKCE or configured token-hash email templates. Supabase provider and inbox verification remain setup requirements.
 
 ## Configuration
 

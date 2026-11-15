@@ -9,12 +9,20 @@ Vendor-neutral fullstack starter: SvelteKit 2, Svelte 5, Bun, PostgreSQL, Drizzl
 3. Install dependencies: `bun install`.
 4. Create Better Auth tables: `bun run auth:migrate` (runs `bunx auth@1.7.25 migrate --config ./src/lib/server/auth.ts`). Review the generated migration before applying it to production.
 5. Create app tasks table using `psql "$DATABASE_URL" -f migrations/0001_tasks.sql` or `bun run db:push` (Drizzle config is restricted to `tasks` only).
-6. Start: `bun run dev`. Create an account, sign in, and manage your tasks.
+6. Start: `bun run dev`. Create an account, open the verification link from your email (or the development terminal), then sign in and manage your tasks.
 7. Run: `bun run check && bun run build`.
 
 ## Password reset
 
-In development, reset links are logged to your **server terminal** if `RESEND_API_KEY` and `RESEND_FROM_EMAIL` are missing. Never share those links or use this logging in production. In production, configure a verified sender with Resend; otherwise the reset operation fails safely rather than silently claiming email delivery.
+In development, verification and reset links are logged to your **server terminal** if `RESEND_API_KEY` and `RESEND_FROM_EMAIL` are missing. Never share those links or use this logging in production. In production, configure a verified sender with Resend; otherwise the email transport fails rather than claiming delivery.
+
+## Account settings and verified signup
+
+- `/settings` includes display-name editing, current-password-checked password changes, active-session metadata and sign-out of other devices. Password changes revoke other sessions; raw session tokens are never serialized into settings page data.
+- Names are trimmed and validated server-side (1–100 characters) on both signup and profile updates. Email addresses remain read-only in settings; changing an email needs a separate verified-address flow.
+- Email verification is required by default (`REQUIRE_EMAIL_VERIFICATION=true`). Signup does not issue a session until the email is verified. `/verify-email` can request another link. Verification does not automatically sign the user in.
+- Existing unverified users must verify their address before their next sign-in. No new database schema is needed. For a deliberate local experiment only, `REQUIRE_EMAIL_VERIFICATION=false` permits unverified sign-in.
+- Configure a verified Resend sender before production use and test actual inbox delivery. The local integration suite captures development-only links; it does not verify external SMTP/Resend delivery.
 
 ## Authorization and security
 
@@ -30,4 +38,4 @@ See `migrations/0001_tasks.sql` and `src/lib/server/auth.ts` for details. Valida
 
 Use Bun **1.4.4** and the included `bun.lock`. Run `bun install --frozen-lockfile` to reproduce the checked dependency graph. When deliberately changing dependencies, update the manifest and lockfile together and rerun checks. This folder does not need the monorepo root or its tooling.
 
-Provider integration checks are available via `bun run test:integration`; see `tests/.env.example` and the repository [testing guide](https://github.com/rifkinp/kid-starterpack/blob/main/docs/testing.md). Use disposable test services only.
+Run `bun run test` for email-transport regression checks. Provider integration checks are available via `bun run test:integration`; see `tests/.env.example` and the repository [testing guide](https://github.com/rifkinp/kid-starterpack/blob/main/docs/testing.md). Use disposable test services only.

@@ -2,7 +2,7 @@
 
 First-party CLI for the open-source [Kid StarterPack](https://github.com/rifkinp/kid-starterpack) monorepo.
 
-**Status:** [0.1.0 is published on npm](https://www.npmjs.com/package/create-kid-starter). This source prepares 0.1.1 with optional Git initialization in the wizard. Publish 0.1.1 before expecting the new prompt from `@latest`.
+**Status:** [0.1.1 is published on npm](https://www.npmjs.com/package/create-kid-starter), including optional Git initialization in the wizard and the direct-copy `--git` flag.
 
 ## Wizard
 
@@ -18,7 +18,13 @@ Choose a template and project directory, answer **Initialize Git repository? [y/
 npx --yes create-kid-starter@latest --template elysia-api my-api
 ```
 
-Adding `--template` automatically bypasses every question, including Git initialization. If no folder is specified, the template ID is used. Direct copy never initializes Git; dependencies are not installed by default.
+Adding `--template` automatically bypasses every question, including Git initialization. If no folder is specified, the template ID is used. Git initialization and dependency installation are off by default. Add `--git` to initialize a fresh repository without prompting; the website's optional **Initialize Git repository** checkbox adds this flag automatically. `--no-git` explicitly disables it.
+
+```bash
+npx --yes create-kid-starter@latest --template elysia-api my-api --git
+```
+
+The checkbox and `--git` flag require version 0.1.1 or later; 0.1.0 does not support the flag.
 
 ```bash
 npx --yes create-kid-starter@latest -t sveltekit-supabase my-app --install
