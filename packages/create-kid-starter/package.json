@@ -13,7 +13,7 @@
     "node": ">=20"
   },
   "bin": {
-    "create-kid-starter": "./bin/create-kid-starter.mjs"
+    "create-kid-starter": "bin/create-kid-starter.mjs"
   },
   "exports": {
     ".": "./src/index.mjs"
