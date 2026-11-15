@@ -1,0 +1,2 @@
+<script lang="ts">let { form } = $props();</script>
+<svelte:head><title>Choose password · Kid Supabase</title></svelte:head><main class="auth-wrap"><form method="POST" class="auth-card"><h1 class="text-3xl font-bold">Choose a new password</h1>{#if form?.message}<p role="alert" class="alert">{form.message}</p>{/if}<label class="label" for="password">New password</label><input class="field" type="password" name="password" id="password" minlength="8" maxlength="128" autocomplete="new-password" required/><button class="primary w-full mt-6">Save password</button></form></main>

@@ -1,0 +1,12 @@
+<script lang="ts">
+import { goto } from '$app/navigation';
+import { authClient } from '$lib/auth-client';
+let { data, form } = $props();
+let busy = $state(false);
+async function signOut(){busy=true;try{await authClient.signOut();await goto('/sign-in');}finally{busy=false;}}
+</script><svelte:head><title>Dashboard · Kid Postgres</title></svelte:head>
+<main class="max-w-4xl mx-auto px-6 py-12"><header class="flex flex-wrap items-center gap-6 justify-between"><div><div class="text-violet-300 uppercase tracking-widest text-xs font-bold">Kid Fullstack / PostgreSQL</div><h1 class="text-4xl font-bold mt-3">Your workspace.</h1><p class="text-slate-400 mt-2">Signed in as {data.user.email}</p></div><button disabled={busy} onclick={signOut} class="border border-white/20 rounded-xl px-5 py-2.5 hover:bg-white/5">Sign out</button></header>
+<div class="grid sm:grid-cols-2 gap-4 mt-9"><div class="panel"><p class="text-slate-400 text-sm">Personal tasks</p><div class="font-bold text-4xl mt-3">{data.tasks.length}</div></div><div class="panel"><p class="text-slate-400 text-sm">Completed</p><div class="font-bold text-4xl mt-3 text-emerald-300">{data.tasks.filter(t=>t.done).length}</div></div></div>
+<section class="panel mt-7"><h2 class="font-bold text-xl">My tasks</h2><p class="text-sm text-slate-400 mt-2">These tasks are scoped to your authenticated user ID on every server query.</p>{#if form?.message}<p class="alert" role="alert">{form.message}</p>{/if}
+<form method="POST" action="?/add" class="flex gap-2 mt-6"><input class="field flex-1" name="title" placeholder="New task..." aria-label="Task title" required maxlength="160"/><button class="primary">Add task</button></form>
+<ul class="mt-5 divide-y divide-white/10">{#each data.tasks as task (task.id)}<li class="py-4 flex gap-3 items-center"><form method="POST" action="?/toggle"><input type="hidden" name="id" value={task.id}/><input type="hidden" name="done" value={String(!task.done)}/><button class="text-violet-300 text-xl" aria-label={'Toggle '+task.title}>{task.done?'☑':'□'}</button></form><span class="flex-1" class:line-through={task.done} class:text-slate-500={task.done}>{task.title}</span><form method="POST" action="?/delete"><input type="hidden" name="id" value={task.id}/><button class="text-rose-300 text-sm">Delete</button></form></li>{:else}<li class="text-slate-500 text-sm py-6">No tasks yet.</li>{/each}</ul></section></main>

@@ -1,0 +1,3 @@
+<script lang="ts">let { form } = $props();</script>
+<svelte:head><title>Reset password · Kid Supabase</title></svelte:head>
+<main class="auth-wrap"><form method="POST" class="auth-card"><a href="/login" class="text-violet-300 text-sm">← Back to sign in</a><h1 class="text-3xl font-bold mt-6">Reset password</h1><p class="text-slate-400 mt-2">Receive a secure link by email.</p>{#if form?.message}<p role="alert" class="alert">{form.message}</p>{/if}{#if form?.success}<p role="status" class="success">{form.success}</p>{/if}<label class="label" for="email">Email</label><input class="field" type="email" name="email" id="email" autocomplete="email" required/><button class="primary w-full mt-6">Send reset link</button></form></main>

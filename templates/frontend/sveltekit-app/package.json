@@ -1,0 +1,25 @@
+{
+  "name": "kid-sveltekit-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Responsive application shell with interactive local task demo",
+  "scripts": {
+    "dev": "vite dev --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "6.0.0",
+    "@sveltejs/kit": "2.70.4",
+    "@sveltejs/vite-plugin-svelte": "5.1.1",
+    "@tailwindcss/vite": "4.3.5",
+    "tailwindcss": "4.3.5",
+    "svelte": "5.57.3",
+    "svelte-check": "4.3.3",
+    "typescript": "5.9.3",
+    "vite": "6.3.6"
+  },
+  "dependencies": {}
+}

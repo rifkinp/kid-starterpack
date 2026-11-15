@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/website"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/templates/frontend/sveltekit-minimal"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/templates/frontend/sveltekit-app"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/templates/backend/elysia-api"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/templates/fullstack/sveltekit-supabase"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/templates/fullstack/sveltekit-postgres"
+    schedule:
+      interval: "weekly"

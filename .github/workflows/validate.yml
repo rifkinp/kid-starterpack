@@ -1,0 +1,43 @@
+name: Verify starters
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.0'
+      - name: Catalog integrity
+        run: node scripts/validate.mjs
+      - name: Install and check website
+        working-directory: website
+        run: |
+          bun install
+          bun run check
+          bun run build
+  templates:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        template:
+          - templates/frontend/sveltekit-minimal
+          - templates/frontend/sveltekit-app
+          - templates/backend/elysia-api
+          - templates/fullstack/sveltekit-supabase
+          - templates/fullstack/sveltekit-postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.0'
+      - name: Install, check and build (no DB calls)
+        working-directory: ${{ matrix.template }}
+        run: |
+          bun install
+          bun run check
+          if [ -f svelte.config.js ]; then bun run build; else bun test; fi

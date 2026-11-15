@@ -1,0 +1,11 @@
+@import "tailwindcss";
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e9edfa;background:#080b14;scroll-behavior:smooth;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 80% 42% at 50% -9%,#25204c 0,transparent 74%),#080b14}a{text-decoration:none;color:inherit}button,input{font:inherit}button{cursor:pointer}::selection{background:#6b5de2;color:white}
+:focus-visible{outline:2px solid #a89afa;outline-offset:3px}
+.shell{max-width:1150px;margin:0 auto;padding:0 28px}
+.glass{background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.015));border:1px solid rgba(217,225,255,.105);border-radius:20px}
+.k-pill{display:inline-flex;align-items:center;gap:8px;font-size:12px;border:1px solid rgba(187,172,254,.18);background:rgba(106,88,196,.12);color:#c7bdfc;padding:6px 12px;border-radius:999px;letter-spacing:.04em}
+.k-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:11px;padding:11px 17px;font-weight:650;font-size:13px;transition:.15s ease;border:1px solid rgba(255,255,255,.11)}.k-btn:hover{transform:translateY(-1px);filter:brightness(1.16)}.k-btn-primary{background:#7565f5;color:#fff;box-shadow:0 8px 30px rgba(88,68,211,.22)}.k-btn-ghost{background:rgba(255,255,255,.04);color:#e7e9fa}
+.text-muted{color:#8d95b0}.subtle{color:#abb3cc}.k-tag{padding:5px 8px;color:#aeb5ce;background:#ffffff0b;border:1px solid #ffffff13;border-radius:7px;font-size:11px;font-weight:550}
+.k-card{transition:.18s ease}.k-card:hover{transform:translateY(-4px);border-color:rgba(150,135,246,.48);background:linear-gradient(145deg,rgba(116,99,238,.09),rgba(255,255,255,.012))}
+.prose-k{color:#bbc2d8;font-size:15px;line-height:1.85}.prose-k h2{color:white;font-size:21px;letter-spacing:-.025em;font-weight:700;margin-top:27px;margin-bottom:6px}.prose-k p{margin:9px 0}.prose-k li{margin-left:20px;list-style:disc}.prose-k a{color:#b8acff;text-decoration:underline}.prose-k code{background:#26243c;padding:3px 5px;border-radius:5px}.prose-k blockquote{border-left:2px solid #8b79e9;padding-left:15px}
