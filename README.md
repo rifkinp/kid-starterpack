@@ -42,7 +42,7 @@ bun install
 bun run dev
 ```
 
-When `--template` is supplied, **no wizard or setup questions are shown**, even when project name is omitted (the template ID is used as the folder name). Dependencies are not installed unless `--install` is specified.
+When `--template` is supplied, **no wizard or setup questions are shown**, even when project name is omitted (the template ID is used as the folder name). Dependencies are not installed unless `--install` is specified. Git initialization is off by default; the website checkbox adds `--git` to opt in without prompting (requires CLI 0.1.1+).
 
 ### Use the latest CLI source locally
 

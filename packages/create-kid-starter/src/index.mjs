@@ -12,7 +12,7 @@ const validSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const validRef = /^(?!-)[a-zA-Z0-9_.-]+(?:\/[a-zA-Z0-9_.-]+)*$/;
 
 export function parseArgs(argv) {
-  const options = { template: null, directory: null, install: false, packageManager: 'bun', ref: 'main', list: false, help: false };
+  const options = { template: null, directory: null, install: false, initializeGit: null, packageManager: 'bun', ref: 'main', list: false, help: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--') continue;
@@ -20,6 +20,8 @@ export function parseArgs(argv) {
     else if (arg === '--list') options.list = true;
     else if (arg === '--install') options.install = true;
     else if (arg === '--no-install') options.install = false;
+    else if (arg === '--git') options.initializeGit = true;
+    else if (arg === '--no-git') options.initializeGit = false;
     else if (arg === '--yes' || arg === '-y') options.yes = true;
     else if (['--template', '-t', '--dir', '-d', '--ref', '--package-manager'].includes(arg)) {
       const value = argv[++i];
@@ -198,6 +200,8 @@ export const HELP = [
   '  -t, --template <id>     Choose a template and bypass ALL prompts',
   '  -d, --dir <folder>      Output directory (or use a positional argument)',
   '      --install           Opt in to installing dependencies',
+  '      --git               Initialize a fresh Git repository without prompting',
+  '      --no-git            Skip Git initialization',
   '      --package-manager   bun | npm | pnpm (default: bun)',
   '      --ref <branch>      Source repository branch/tag (default: main)',
   '      --list              Show available templates',
@@ -218,7 +222,7 @@ export async function runCLI(argv, {
   let selected;
   let directory;
   let install = args.install;
-  let initializeGit = false;
+  let initializeGit = args.initializeGit === true;
   if (args.template) {
     // A specific template is the complete direct-copy mode: NO prompts.
     selected = catalog.find((item) => item.id === args.template);
@@ -230,7 +234,7 @@ export async function runCLI(argv, {
     selected = chosen.template;
     directory = args.directory || chosen.directory;
     install = install || chosen.install;
-    initializeGit = chosen.initializeGit === true;
+    initializeGit = args.initializeGit ?? (chosen.initializeGit === true);
   }
   output.log('Creating ' + directory + ' from ' + selected.id + ' ...');
   const destination = await projectCreator({

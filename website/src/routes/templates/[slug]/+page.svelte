@@ -1,9 +1,12 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { repositoryUrl } from '$lib/config';
+  import { directCopyCommand } from '$lib/cli-command.js';
 
   let { data } = $props();
   let copied = $state<'direct' | 'wizard' | null>(null);
+  let initializeGit = $state(false);
+  let command = $derived(directCopyCommand(data.template.slug, initializeGit));
 
   async function copyCommand(command: string, kind: 'direct' | 'wizard') {
     try {
@@ -49,16 +52,32 @@
         This command selects the template automatically, creates my-app, and skips every CLI question.
       </p>
 
-      <div class="mt-5 p-4 rounded-xl bg-[#0c1020] border border-white/10 break-all font-mono text-[12px] leading-6 text-slate-300 select-all">{data.command}</div>
+      <label class="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+        <input
+          type="checkbox"
+          class="mt-0.5 size-4 shrink-0 accent-violet-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-400"
+          bind:checked={initializeGit}
+          onchange={() => { copied = null; }}
+        />
+        <span>
+          <span class="block text-sm font-semibold text-slate-200">Initialize Git repository</span>
+          <span class="mt-1 block text-xs leading-relaxed text-slate-400">Start tracking your project with Git.</span>
+        </span>
+      </label>
+      <div class="mt-4 p-4 rounded-xl bg-[#0c1020] border border-white/10 break-all font-mono text-[12px] leading-6 text-slate-300 select-all">{command}</div>
       <button
         type="button"
         class="k-btn k-btn-primary w-full mt-3"
-        onclick={() => copyCommand(data.command, 'direct')}
+        onclick={() => copyCommand(command, 'direct')}
       >
         {copied === 'direct' ? '✓ Command copied' : 'Copy command · Skip wizard'}
       </button>
       <p class="text-xs text-amber-200/80 mt-3">
-        CLI 0.1.0 is available on npm. Direct copy skips all setup questions.
+        {#if initializeGit}
+          Git initialization requires CLI 0.1.1 or later. All setup questions are skipped.
+        {:else}
+          Direct copy skips all setup questions. Git initialization is optional.
+        {/if}
       </p>
 
       <p class="text-slate-500 text-xs mt-6">Then run:</p>

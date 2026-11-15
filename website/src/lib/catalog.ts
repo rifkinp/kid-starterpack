@@ -3,6 +3,7 @@ import { marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import { githubOwner } from './config';
 import { readMetadata } from './catalog-metadata.js';
+import { directCopyCommand } from './cli-command.js';
 
 const files = import.meta.glob('../../../content/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 export type Template = {
@@ -22,4 +23,4 @@ const entries = Object.values(files).map((file) => {
 }).sort((a,b)=>a.title.localeCompare(b.title));
 export function getTemplates(): Template[] { return entries; }
 export function getTemplate(slug: string): Template | undefined { return entries.find(x => x.slug === slug); }
-export function templateCommand(t: Template): string { return `npx --yes create-kid-starter@latest --template ${t.slug} my-app`; }
+export function templateCommand(t: Template): string { return directCopyCommand(t.slug); }

@@ -20,6 +20,8 @@ test('parses template flags and direct-copy directory', () => {
   assert.equal(flags.directory, 'my-api');
   assert.equal(flags.install, false);
   assert.equal(parseArgs(['-t', 'elysia-api', '--install']).install, true);
+  assert.equal(parseArgs(['-t', 'elysia-api', '--git']).initializeGit, true);
+  assert.equal(parseArgs(['-t', 'elysia-api', '--git', '--no-git']).initializeGit, false);
   assert.throws(() => parseArgs(['--package-manager', 'unknown']), /Package manager/);
   assert.throws(() => parseArgs(['--template', '../unsafe']), /Invalid template/);
 });
