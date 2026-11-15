@@ -19,5 +19,34 @@ for (const file of fs.readdirSync(contentFolder).filter(x=>x.endsWith('.md'))) {
   if (slug !== file.slice(0,-3)) issues.push(`content/${file}: slug/filename mismatch`);
   if (!fs.existsSync(path.join(root,templatePath,'package.json'))) issues.push(`content/${file}: bad target ${templatePath}`);
 }
+// The website's Markdown catalog and the CLI's live registry must agree.
+const registry = JSON.parse(fs.readFileSync(path.join(root, 'catalog/templates.json'), 'utf8'));
+if (!Array.isArray(registry.templates)) {
+  issues.push('catalog/templates.json must define templates[]');
+} else {
+  const ids = new Set();
+  const mdFiles = fs.readdirSync(contentFolder).filter((file) => file.endsWith('.md'));
+  for (const item of registry.templates) {
+    if (!item.id || ids.has(item.id) || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(item.id)) {
+      issues.push('Duplicate or invalid catalog ID: ' + item.id);
+      continue;
+    }
+    ids.add(item.id);
+    const expected = new RegExp('^templates/(frontend|backend|fullstack)/' + item.id + '
+console.log(`Validated ${folders.length} standalone templates and ${fs.readdirSync(contentFolder).filter(x=>x.endsWith('.md')).length} catalog entries.`);
+);
+    if (!expected.test(item.path)) issues.push('Unsafe catalog path: ' + item.path);
+    if (!fs.existsSync(path.join(root, item.path, 'package.json'))) issues.push('Missing catalog template: ' + item.path);
+    const md = path.join(contentFolder, item.id + '.md');
+    if (!fs.existsSync(md)) issues.push('Missing Markdown entry: ' + item.id);
+    else {
+      const raw = fs.readFileSync(md, 'utf8');
+      const mdPath = /^path:\s*(.+)$/m.exec(raw)?.[1]?.trim();
+      if (mdPath !== item.path) issues.push('Path mismatch between catalog and content: ' + item.id);
+    }
+  }
+  for (const md of mdFiles) if (!ids.has(md.slice(0, -3))) issues.push('Markdown missing in CLI registry: ' + md);
+}
+
 if (issues.length) { console.error(issues.join('\n')); process.exit(1); }
 console.log(`Validated ${folders.length} standalone templates and ${fs.readdirSync(contentFolder).filter(x=>x.endsWith('.md')).length} catalog entries.`);
