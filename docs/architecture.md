@@ -2,7 +2,7 @@
 
 ## Why one repository?
 
-One PR/issue queue, one Markdown catalog, five standalone starters. Giget copies one subfolder. **GitHub's `Use this template` button copies the entire repository**, so the site advertises `giget` instead.
+One PR/issue queue, one Markdown catalog, five standalone starters. The dedicated `create-kid-starter` CLI clones a single template path with Git sparse checkout. **GitHub's `Use this template` copies the whole repository**, so the site provides per-template direct CLI commands instead.
 
 ## What does "auth ready" mean?
 
