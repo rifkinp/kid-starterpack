@@ -24,4 +24,4 @@ const entries = Object.values(files).map((file) => {
 }).sort((a,b)=>a.title.localeCompare(b.title));
 export function getTemplates(): Template[] { return entries; }
 export function getTemplate(slug: string): Template | undefined { return entries.find(x => x.slug === slug); }
-export function templateCommand(t: Template): string { return `npx giget@latest gh:${githubOwner}/kid-starterpack/${t.path} my-app`; }
+export function templateCommand(t: Template): string { return `npx --yes create-kid-starter@latest --template ${t.slug} my-app`; }
