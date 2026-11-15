@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "2.83.0",
-    "@supabase/ssr": "0.7.0"
+    "@supabase/ssr": "0.12.7"
   }
 }
